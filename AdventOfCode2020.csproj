@@ -1,12 +1,29 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <OutputType>Exe</OutputType>
+    <OutputType>WinExe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
+    <UseWPF>true</UseWPF>
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Util\" />
+    <None Remove="Resources\Calendar_16x.ico" />
+    <None Remove="Resources\StatusHelp_16x.png" />
+    <None Remove="Resources\StatusInvalid_16x.png" />
+    <None Remove="Resources\StatusOK_16x.png" />
+    <None Remove="Resources\StatusWarning_16x.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Resources\Calendar_16x.ico" />
+    <Resource Include="Resources\StatusHelp_16x.png" />
+    <Resource Include="Resources\StatusInvalid_16x.png" />
+    <Resource Include="Resources\StatusOK_16x.png" />
+    <Resource Include="Resources\StatusWarning_16x.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Include="App.xaml" />
   </ItemGroup>
 
 </Project>

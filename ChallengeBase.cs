@@ -1,38 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 using System.Text;
 
 namespace AdventOfCode2020
 {
-    abstract class ChallengeBase
+    [AttributeUsage(AttributeTargets.Class)]
+    public class ChallengeAttribute : Attribute
     {
-        public int DayNumber { get; }
+        public int DayNum { get; }
+        public string Title { get; }
 
-        public ChallengeBase(int number)
+        public ChallengeAttribute(int dayNumber, string title)
         {
-            DayNumber = number;
+            DayNum = dayNumber;
+            Title = title;
         }
+    }
 
-        public void Run(string input)
-        {
-            RunInner(1, () => Part1(input));
-            RunInner(2, () => Part2(input));
-        }
-
-        private void RunInner(int part, Func<object> action)
-        {
-            try
-            {
-                var result = action();
-                Console.WriteLine($"Part {part} solution result: {result?.ToString() ?? "null"}");
-            }
-            catch (NotImplementedException)
-            {
-                Console.WriteLine($"Part {part} not yet implemented");
-            }
-            catch { throw; }
-        }
-
+    public abstract class ChallengeBase
+    {
         protected void Assert(string message, bool condition)
         {
             if (!condition) throw new Exception($"Test failed: {message}");
@@ -44,7 +32,10 @@ namespace AdventOfCode2020
             Assert(message, conditionRunner());
         }
 
-        protected abstract object Part1(string input);
-        protected abstract object Part2(string input);
+        public virtual object Part1(string input) => throw new NotImplementedException();
+        public virtual void Part1Test() => throw new NotImplementedException();
+
+        public virtual object Part2(string input) => throw new NotImplementedException();
+        public virtual void Part2Test() => throw new NotImplementedException();
     }
 }

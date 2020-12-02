@@ -1,0 +1,11 @@
+﻿<Application x:Class="AdventOfCode2020.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:AdventOfCode2020.UI"
+             xmlns:util="clr-namespace:AdventOfCode2020.Util"
+             StartupUri="UI/MainWindow.xaml">
+    <Application.Resources>
+        <util:TestResultsToIconConverter x:Key="TestIcon" />
+        <util:TestResultsToSummaryConverter x:Key="TestSummary" />
+    </Application.Resources>
+</Application>

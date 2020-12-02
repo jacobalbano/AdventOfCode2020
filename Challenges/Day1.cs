@@ -5,22 +5,17 @@ using System.Text;
 
 namespace AdventOfCode2020.Challenges
 {
+    [Challenge(1, "Report Repair")]
     class Day1 : ChallengeBase
     {
-        public Day1() : base(1)
-        {
-            var testData = @"1721
+        private const string testData = @"1721
 979
 366
 299
 675
 1456";
-
-            Assert("Part1 should match example outcome", Part1(testData).Equals(514579));
-            Assert("Part2 should match example outcome", Part2(testData).Equals(241861950));
-        }
-
-        protected override object Part1(string input)
+        
+        public override object Part1(string input)
         {
             var numbers = input.Split("\r\n".ToCharArray(), StringSplitOptions.RemoveEmptyEntries)
                 .Select(int.Parse)
@@ -33,7 +28,17 @@ namespace AdventOfCode2020.Challenges
             return a * b;
         }
 
-        protected override object Part2(string input)
+        public override void Part1Test()
+        {
+            Assert("Part1 should match example outcome", Part1(testData).Equals(514579));
+        }
+
+        public override void Part2Test()
+        {
+            Assert("Part2 should match example outcome", Part2(testData).Equals(241861950));
+        }
+
+        public override object Part2(string input)
         {
             var numbers = input.Split("\r\n".ToCharArray(), StringSplitOptions.RemoveEmptyEntries)
                 .Select(int.Parse)
