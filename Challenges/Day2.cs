@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AdventOfCode2020.Util;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -53,16 +54,14 @@ namespace AdventOfCode2020.Challenges
 
         private static void Parse(string input, out int a, out int b, out char target, out string password)
         {
-            var match = parser.Match(input);
-            if (!match.Success)
-                throw new Exception("Panic! Invalid input");
-
-            a = int.Parse(match.Groups[1].Value);
-            b = int.Parse(match.Groups[2].Value);
-            target = match.Groups[3].Value[0];
-            password = match.Groups[4].Value;
+            var e = new StringParser(input);
+            a = e.ReadInt();
+            e.Skip("-".Length);
+            b = e.ReadInt();
+            e.Skip(" ".Length);
+            target = e.ReadChar();
+            e.Skip(": ".Length);
+            password = e.ReadRemainder();
         }
-
-        private static readonly Regex parser = new Regex(@"(\d*)-(\d*) (\w): (\w*)", RegexOptions.Compiled);
     }
 }
