@@ -15,6 +15,11 @@ public static class Assert
             IsTrue(Equals(expected[i], actual[i]), $"expected and actual differ at position {i} ({expected[i]}) vs {actual[i]})");
     }
 
+    public static void IsFalse(bool condition, string message)
+    {
+        IsTrue(!condition, message);
+    }
+
     public static void IsTrue(bool condition, string message)
     {
         if (!condition)

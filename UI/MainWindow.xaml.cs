@@ -27,13 +27,8 @@ namespace AdventOfCode2020.UI
             get => (ChallengeInfo)GetValue(selectedChallengeDp);
             set
             {
-                Part1.TestResults = Part2.TestResults = TestResults.None;
                 SetValue(selectedChallengeDp, value);
-
-                var instance = value.Create();
-
-                Part1.TestResults = GetTestResult(() => instance.Part1Test());
-                Part2.TestResults = GetTestResult(() => instance.Part2Test());
+                UpdateTestResults(value);
             }
         }
 
@@ -49,6 +44,7 @@ namespace AdventOfCode2020.UI
                 .Where(x => typeof(ChallengeBase).IsAssignableFrom(x) && !x.IsAbstract)
                 .Where(x => x.IsDefined(typeof(ChallengeAttribute), false))
                 .Select(ChallengeInfo.FromType)
+                .OrderBy(x => x.Day)
                 .ToList();
 
             SelectedChallenge = Challenges.Last();
@@ -104,12 +100,14 @@ namespace AdventOfCode2020.UI
             }
             catch
             {
-                return TestResults.NotImplemented;
+                return TestResults.Failed;
             }
         }
 
         public class ChallengeInfo
         {
+            public int Day { get; }
+
             public string Name { get; }
 
             public Factory Create { get; }
@@ -119,11 +117,12 @@ namespace AdventOfCode2020.UI
                 var attr = type.GetCustomAttribute<ChallengeAttribute>(false);
                 var name = $"Day {attr.DayNum} - {attr.Title}";
                 var factory = CreateFactory(type);
-                return new ChallengeInfo(name, factory);
+                return new ChallengeInfo(attr.DayNum, name, factory);
             }
 
-            private ChallengeInfo(string name, Factory func)
+            private ChallengeInfo(int day, string name, Factory func)
             {
+                Day = day;
                 Name = name;
                 Create = func;
             }
@@ -138,9 +137,17 @@ namespace AdventOfCode2020.UI
             public delegate ChallengeBase Factory();
         }
 
+        private void UpdateTestResults(ChallengeInfo value)
+        {
+            var instance = value.Create();
+
+            Part1.TestResults = GetTestResult(() => instance.Part1Test());
+            Part2.TestResults = GetTestResult(() => instance.Part2Test());
+        }
+
         private static readonly DependencyProperty selectedChallengeDp =
             DependencyProperty.Register("SelectedChallenge",
             typeof(ChallengeInfo), typeof(MainWindow),
-            new PropertyMetadata(null, (s, e) => ((MainWindow)s).SelectedChallenge = (ChallengeInfo) e.NewValue));
+            new PropertyMetadata(null, (s, e) => ((MainWindow)s).UpdateTestResults((ChallengeInfo) e.NewValue)));
     }
 }
