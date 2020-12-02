@@ -21,17 +21,6 @@ namespace AdventOfCode2020
 
     public abstract class ChallengeBase
     {
-        protected void Assert(string message, bool condition)
-        {
-            if (!condition) throw new Exception($"Test failed: {message}");
-            Console.WriteLine($"Test passed: {message}");
-        }
-
-        protected void Assert(string message, Func<bool> conditionRunner)
-        {
-            Assert(message, conditionRunner());
-        }
-
         public virtual object Part1(string input) => throw new NotImplementedException();
         public virtual void Part1Test() => throw new NotImplementedException();
 

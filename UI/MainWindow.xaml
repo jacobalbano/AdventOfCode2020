@@ -34,6 +34,7 @@
                     ItemsSource="{Binding Challenges}"
                     SelectedItem="{Binding SelectedChallenge}"
                     DisplayMemberPath="Name"
+                    VerticalContentAlignment="Center"
                 />
                 <Button Margin="0,4,0,0" MinWidth="60" Content="Run" Grid.Row="1" Grid.Column="1" Padding="5" Click="Run_Click"/>
             </Grid>

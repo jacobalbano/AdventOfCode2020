@@ -17,7 +17,7 @@ namespace AdventOfCode2020.Challenges
         
         public override object Part1(string input)
         {
-            var numbers = input.Split("\r\n".ToCharArray(), StringSplitOptions.RemoveEmptyEntries)
+            var numbers = input.ToLines()
                 .Select(int.Parse)
                 .OrderByDescending(x => x)
                 .ToArray();
@@ -30,17 +30,12 @@ namespace AdventOfCode2020.Challenges
 
         public override void Part1Test()
         {
-            Assert("Part1 should match example outcome", Part1(testData).Equals(514579));
-        }
-
-        public override void Part2Test()
-        {
-            Assert("Part2 should match example outcome", Part2(testData).Equals(241861950));
+            Assert.AreEqual(Part1(testData), 514579);
         }
 
         public override object Part2(string input)
         {
-            var numbers = input.Split("\r\n".ToCharArray(), StringSplitOptions.RemoveEmptyEntries)
+            var numbers = input.ToLines()
                 .Select(int.Parse)
                 .OrderByDescending(x => x)
                 .ToArray();
@@ -49,6 +44,11 @@ namespace AdventOfCode2020.Challenges
                 throw new Exception("Panic! Unable to solve");
 
             return a * b * c;
+        }
+
+        public override void Part2Test()
+        {
+            Assert.AreEqual(Part2(testData), 241861950);
         }
 
         /// <summary>

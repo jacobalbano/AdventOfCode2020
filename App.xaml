@@ -5,6 +5,8 @@
              xmlns:util="clr-namespace:AdventOfCode2020.Util"
              StartupUri="UI/MainWindow.xaml">
     <Application.Resources>
+        <BitmapImage x:Key="Calendar" UriSource="Resources/Calendar_16x.ico" />
+
         <util:TestResultsToIconConverter x:Key="TestIcon" />
         <util:TestResultsToSummaryConverter x:Key="TestSummary" />
     </Application.Resources>

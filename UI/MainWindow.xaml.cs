@@ -20,9 +20,6 @@ using LX = System.Linq.Expressions;
 
 namespace AdventOfCode2020.UI
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
     public partial class MainWindow : Window
     {
         public ChallengeInfo SelectedChallenge
@@ -40,23 +37,6 @@ namespace AdventOfCode2020.UI
             }
         }
 
-        private static TestResults GetTestResult(Action runTest)
-        {
-            try
-            {
-                runTest();
-                return TestResults.Passed;
-            }
-            catch (NotImplementedException)
-            {
-                return TestResults.NotImplemented;
-            }
-            catch
-            {
-                return TestResults.NotImplemented;
-            }
-        }
-
         public IReadOnlyList<ChallengeInfo> Challenges { get; }
 
         public string Input { get; set; }
@@ -66,8 +46,7 @@ namespace AdventOfCode2020.UI
             InitializeComponent();
             DataContext = this;
             Challenges = typeof(ChallengeBase).Assembly.GetTypes()
-                .Where(x => typeof(ChallengeBase).IsAssignableFrom(x))
-                .Where(x => !x.IsAbstract)
+                .Where(x => typeof(ChallengeBase).IsAssignableFrom(x) && !x.IsAbstract)
                 .Where(x => x.IsDefined(typeof(ChallengeAttribute), false))
                 .Select(ChallengeInfo.FromType)
                 .ToList();
@@ -110,6 +89,23 @@ namespace AdventOfCode2020.UI
                 return "Not yet implemented";
             }
             catch { throw; }
+        }
+
+        private static TestResults GetTestResult(Action runTest)
+        {
+            try
+            {
+                runTest();
+                return TestResults.Passed;
+            }
+            catch (NotImplementedException)
+            {
+                return TestResults.NotImplemented;
+            }
+            catch
+            {
+                return TestResults.NotImplemented;
+            }
         }
 
         public class ChallengeInfo
