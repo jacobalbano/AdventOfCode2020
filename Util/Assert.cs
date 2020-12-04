@@ -38,6 +38,11 @@ public static class Assert
             throw new AssertionFailure($"Values do not match - expected: {expected}, actual: {actual}");
     }
 
+    public static void Unreachable()
+    {
+        throw new AssertionFailure("Something happened that should be impossible");
+    }
+
     public class AssertionFailure : Exception
     {
         public AssertionFailure(string message) : base(message)

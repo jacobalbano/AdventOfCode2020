@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace AdventOfCode2020.Challenges
@@ -60,7 +61,7 @@ namespace AdventOfCode2020.Challenges
 
             public RepeatingGrid(string input)
             {
-                var lines = input.ToLines();
+                var lines = input.ToLines().ToArray();
                 Stride = lines[0].Length;
                 Height = lines.Length;
                 storage = new bool[Stride, Height];
