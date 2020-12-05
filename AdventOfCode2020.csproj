@@ -7,23 +7,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Resources\Calendar_16x.ico" />
-    <None Remove="Resources\StatusHelp_16x.png" />
-    <None Remove="Resources\StatusInvalid_16x.png" />
-    <None Remove="Resources\StatusOK_16x.png" />
-    <None Remove="Resources\StatusWarning_16x.png" />
+    <Compile Remove="AdventOfCodeScaffolding\**" />
+    <EmbeddedResource Remove="AdventOfCodeScaffolding\**" />
+    <None Remove="AdventOfCodeScaffolding\**" />
+    <Page Remove="AdventOfCodeScaffolding\**" />
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="Resources\Calendar_16x.ico" />
-    <Resource Include="Resources\StatusHelp_16x.png" />
-    <Resource Include="Resources\StatusInvalid_16x.png" />
-    <Resource Include="Resources\StatusOK_16x.png" />
-    <Resource Include="Resources\StatusWarning_16x.png" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Page Include="App.xaml" />
+    <ProjectReference Include="AdventOfCodeScaffolding\AdventOfCodeScaffolding.csproj" />
   </ItemGroup>
 
 </Project>

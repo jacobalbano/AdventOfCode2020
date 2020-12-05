@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AdventOfCode2020.Util;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -40,7 +41,7 @@ public static class Assert
 
     public static void Unreachable()
     {
-        throw new AssertionFailure("Something happened that should be impossible");
+        throw new UnreachableCodeException();
     }
 
     public class AssertionFailure : Exception

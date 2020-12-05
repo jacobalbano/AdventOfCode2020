@@ -1,4 +1,7 @@
-﻿using System;
+﻿using AdventOfCode2020.Util;
+using AdventOfCode2020.Util.Validators;
+using AdventOfCodeScaffolding;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -42,27 +45,40 @@ namespace AdventOfCode2020.Challenges
 
         private bool PassportIsFullyValid(IReadOnlyDictionary<string, string> passport)
         {
-            bool result = PassportHasAllFields(passport);
+            if (!PassportHasAllFields(passport))
+                return false;
+
             foreach (var (key, value) in passport)
             {
-                switch (key)
+                var isValid = key switch
                 {
-                    case "byr": result &= int.TryParse(value, out var byr) && byr.IsBetween(1920, 2002); break;
-                    case "iyr": result &= int.TryParse(value, out var iyr) && iyr.IsBetween(2010, 2020); break;
-                    case "eyr": result &= int.TryParse(value, out var eyr) && eyr.IsBetween(2020, 2030); break;
-                    case "hgt": result &= (value[^2..] == "cm" && int.Parse(value[..^2]).IsBetween(150, 193)) || (value[^2..] == "in" && int.Parse(value[..^2]).IsBetween(59, 76)); break;
-                    case "hcl": result &= value[0] == '#' && value[1..].All(x => x.IsBetween('0', '9') || x.IsBetween('a', 'f')); break;
-                    case "ecl": result &= validEyeColors.Contains(value); break;
-                    case "pid": result &= value.Length == 9 && int.TryParse(value, out _); break;
-                    case "cid": break;
-                    default: Assert.Unreachable(); break;
-                }
+                    "byr" => birthYear.Validate(value),
+                    "iyr" => issueYear.Validate(value),
+                    "eyr" => expireYear.Validate(value),
+                    "hgt" => height.Validate(value),
+                    "hcl" => hairColor.Validate(value),
+                    "ecl" => eyeColor.Validate(value),
+                    "pid" => passportId.Validate(value),
+                    "cid" => true,
+                    _ => throw new UnreachableCodeException()
+                };
+
+                if (!isValid)
+                    return false;
             }
 
-            return result;
+            return true;
         }
 
-        private static readonly HashSet<string> validEyeColors = new HashSet<string> { "amb", "blu", "brn", "gry", "grn", "hzl", "oth" };
+        private static readonly IValidator<string> birthYear = new PredicateValidator<string>(x => int.TryParse(x, out var byr) && byr.IsBetween(1920, 2002));
+        private static readonly IValidator<string> issueYear = new PredicateValidator<string>(x => int.TryParse(x, out var byr) && byr.IsBetween(2010, 2020));
+        private static readonly IValidator<string> expireYear = new PredicateValidator<string>(x => int.TryParse(x, out var byr) && byr.IsBetween(2020, 2030));
+        private static readonly IValidator<string> heightCm = new PredicateValidator<string>(x => x[^2..] == "cm" && int.Parse(x[..^2]).IsBetween(150, 193));
+        private static readonly IValidator<string> heightIn = new PredicateValidator<string>(x => x[^2..] == "in" && int.Parse(x[..^2]).IsBetween(59, 76));
+        private static readonly IValidator<string> height = new AnyValidator<string>(heightIn, heightCm);
+        private static readonly IValidator<string> eyeColor = new OptionValidator<string>("amb", "blu", "brn", "gry", "grn", "hzl", "oth");
+        private static readonly IValidator<string> passportId = new PredicateValidator<string>(x => x.Length == 9 && int.TryParse(x, out _));
+        private static readonly IValidator<string> hairColor = new PredicateValidator<string>(x => x[0] == '#' && x[1..].All(x => x.IsBetween('0', '9') || x.IsBetween('a', 'f')));
         private static readonly IReadOnlyList<string> requiredKeys = new[] { "byr", "iyr", "eyr", "hgt", "hcl", "ecl", "pid" };
 
         public enum TokenKind { New, Key, Value }
@@ -78,31 +94,25 @@ namespace AdventOfCode2020.Challenges
             bool hasNext = e.MoveNext();
             while (hasNext)
             {
-                var c = e.Current;
-                Assert.AreEqual(TokenKind.New, c.Kind);
                 var passport = new Dictionary<string, string>();
-                
-                Assert.IsTrue(hasNext = e.MoveNext(), "Enumeration continues");
-                Assert.AreEqual(e.Current.Kind, TokenKind.Key);
-
                 while (hasNext && e.Current.Kind == TokenKind.Key)
                 {
                     var key = e.Current.Value;
-
-                    Assert.IsTrue(hasNext = e.MoveNext(), "Enumeration continues");
-                    Assert.AreEqual(e.Current.Kind, TokenKind.Value);
+                    Assert.IsTrue(e.MoveNext(), "Enumeration continues");
+                    Assert.AreEqual(TokenKind.Value, e.Current.Kind);
 
                     passport[key] = e.Current.Value;
-                    hasNext = e.MoveNext();
+                    if ((hasNext = e.MoveNext()) && e.Current.Kind == TokenKind.New)
+                        break;
                 }
 
                 yield return passport;
+                hasNext = e.MoveNext();
             }
         }
 
         private IEnumerable<Token> Tokenize(string input)
         {
-            yield return new Token { Kind = TokenKind.New };
             foreach (var line in input.ToLines())
             {
                 if (string.IsNullOrEmpty(line))
