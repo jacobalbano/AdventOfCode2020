@@ -7,18 +7,20 @@ public static class EnumerableExtensions
     public static IEnumerable<IEnumerable<T>> PartitionBy<T>(this IEnumerable<T> self, Func<T, bool> delimit)
     {
         using (var e = self.GetEnumerator())
-        while (e.MoveNext())
-            yield return PartitionByInner(e, delimit);
-    }
-
-    private static IEnumerable<T> PartitionByInner<T>(IEnumerator<T> e, Func<T, bool> delimit)
-    {
-        do
         {
-            if (delimit(e.Current))
-                yield break;
+            while (e.MoveNext())
+                yield return Inner();
 
-            yield return e.Current;
-        } while (e.MoveNext());
+            IEnumerable<T> Inner()
+            {
+                do
+                {
+                    if (delimit(e.Current))
+                        yield break;
+
+                    yield return e.Current;
+                } while (e.MoveNext());
+            }
+        }    
     }
 }

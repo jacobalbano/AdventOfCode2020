@@ -33,8 +33,9 @@ namespace AdventOfCode2020.Challenges
         {
             return input.ToLines()
                 .PartitionBy(string.IsNullOrWhiteSpace)
-                .Select(x => x.SelectMany(y => y).Distinct().Count())
-                .Sum();
+                .Sum(x => x.SelectMany(y => y)
+                    .Distinct()
+                    .Count());
         }
 
         private static int SumUnanimousAnswers(string input)
