@@ -42,10 +42,11 @@ namespace AdventOfCode2020.Challenges
             return input.ToLines()
                 .PartitionBy(string.IsNullOrWhiteSpace)
                 .Select(x => x.ToList())
-                .Select(x => new { People = x.Count, Answers = x.SelectMany(y => y).GroupBy(y => y)})
-                .Select(x => new { x.People, Answers = x.Answers.Where(y => y.Count() == x.People) })
-                .Select(x => x.Answers.Count())
-                .Sum();
+                .Sum(group => group
+                    .SelectMany(x => x)
+                    .GroupBy(x => x)
+                    .Where(x => x.Count() == group.Count)
+                    .Count());
         }
 
         private const string testInput = @"
