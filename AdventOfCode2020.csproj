@@ -14,6 +14,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove=".gitattributes" />
+    <None Remove=".gitignore" />
+    <None Remove=".gitmodules" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="AdventOfCodeScaffolding\AdventOfCodeScaffolding.csproj" />
   </ItemGroup>
 

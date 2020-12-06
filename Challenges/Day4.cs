@@ -113,11 +113,10 @@ namespace AdventOfCode2020.Challenges
 
         private IEnumerable<Token> Tokenize(string input)
         {
-            foreach (var line in input.ToLines())
+            foreach (var passport in input.ToLines().PartitionBy(string.IsNullOrWhiteSpace))
             {
-                if (string.IsNullOrEmpty(line))
-                    yield return new Token { Kind = TokenKind.New };
-                else
+                yield return new Token { Kind = TokenKind.New };
+                foreach (var line in passport)
                 {
                     foreach (var pair in line.Split(' '))
                     {
