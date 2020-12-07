@@ -82,6 +82,12 @@ namespace AdventOfCode2020.Util
             }
         }
 
+        internal void SkipWhile(Func<char, bool> predicate)
+        {
+            while (cursor < str.Length && predicate(str[cursor]))
+                cursor++;
+        }
+
         public char ReadChar()
         {
             return str[cursor++];

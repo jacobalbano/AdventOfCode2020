@@ -1,4 +1,5 @@
 ﻿using AdventOfCode2020.Util;
+using AdventOfCode2020.Util.Validators;
 using AdventOfCodeScaffolding;
 using System;
 using System.Collections.Generic;
@@ -78,19 +79,13 @@ namespace AdventOfCode2020.Challenges
             foreach (var line in input.ToLines())
             {
                 var parser = new StringParser(line);
-                var parentColor = parser.ReadUntil(" bags contain ", skip: true);
-                var parent = result.Establish(parentColor, x => new Node1 { Color = x });
+                ReadBagColor(parser, out var parentColor);
 
+                var parent = result.Establish(parentColor, x => new Node1 { Color = x });
                 while (parser.HasMaterial)
                 {
-                    if (!parser.TryReadInt(out var num))
-                        break;
-
-                    parser.Skip(1);
-                    var childColor = parser.ReadUntil(" bag", skip: true);
-                    parser.SkipAny("s,. ");
-
-                    var child = result.Establish(childColor, x => new Node1 { Color = x });
+                    ReadChildNode(parser, out var color, out var count);
+                    var child = result.Establish(color, x => new Node1 { Color = x });
                     child.Parents.Add(parent);
                 }
             }
@@ -105,24 +100,34 @@ namespace AdventOfCode2020.Challenges
             foreach (var line in input.ToLines())
             {
                 var parser = new StringParser(line);
-                var parentColor = parser.ReadUntil(" bags contain ", skip: true);
-                var parent = result.Establish(parentColor, x => new Node2 { Color = x });
 
+                ReadBagColor(parser, out var parentColor);
+
+                var parent = result.Establish(parentColor, x => new Node2 { Color = x });
                 while (parser.HasMaterial)
                 {
-                    if (!parser.TryReadInt(out var num))
-                        break;
+                    ReadChildNode(parser, out var color, out var count);
 
-                    parser.Skip(1);
-                    var childColor = parser.ReadUntil(" bag", skip: true);
-                    parser.SkipAny("s,. ");
-
-                    var child = result.Establish(childColor, x => new Node2 { Color = x });
-                    parent.Children[child] = num;
+                    var child = result.Establish(color, x => new Node2 { Color = x });
+                    parent.Children[child] = count;
                 }
             }
 
             return result;
+        }
+
+        private static void ReadChildNode(StringParser parser, out string color, out int count)
+        {
+            count = parser.ReadInt();
+            parser.Skip(1);
+
+            ReadBagColor(parser, out color);
+        }
+
+        private static void ReadBagColor(StringParser parser, out string color)
+        {
+            color = parser.ReadUntil("bag", skip: true).Trim();
+            parser.SkipWhile(x => !char.IsDigit(x));
         }
 
         class Node1
@@ -136,6 +141,8 @@ namespace AdventOfCode2020.Challenges
             public string Color { get; set; }
             public Dictionary<Node2, int> Children { get; } = new Dictionary<Node2, int>();
         }
+
+        private static IValidator<char> skipChars = new OptionValidator<char>(',', '.', ' ', 's');
 
         private const string part1Test = @"
 light red bags contain 1 bright white bag, 2 muted yellow bags.
