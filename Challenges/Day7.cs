@@ -34,7 +34,7 @@ namespace AdventOfCode2020.Challenges
 
         private static int GetPossibleContainingBags(string input)
         {
-            var nodes = NodesByColor(input);
+            var nodes = Part1Nodes(input);
             if (!nodes.TryGetValue("shiny gold", out var myBag))
                 throw new UnreachableCodeException();
 
@@ -42,9 +42,9 @@ namespace AdventOfCode2020.Challenges
                 .Distinct()
                 .Count();
 
-            static IEnumerable<Node> FindNodesContaining(Node node)
+            static IEnumerable<Node1> FindNodesContaining(Node1 node)
             {
-                foreach (var parent in node.ContainedBy)
+                foreach (var parent in node.Parents)
                 {
                     yield return parent;
                     foreach (var grandparent in FindNodesContaining(parent))
@@ -55,31 +55,31 @@ namespace AdventOfCode2020.Challenges
 
         private static int GetTotalContainedBags(string input)
         {
-            var nodes = NodesByColor(input);
+            var nodes = Part2Nodes(input);
             if (!nodes.TryGetValue("shiny gold", out var myBag))
                 throw new UnreachableCodeException();
 
-            return ExploreBag(myBag);
+            return ExploreBag(myBag) - 1;
 
-            static int ExploreBag(Node node)
+            static int ExploreBag(Node2 node)
             {
-                int result = node.Contains.Count;
-                foreach (var child in node.Contains)
-                    result += ExploreBag(child);
+                int result = 1;
+                foreach (var (child, count) in node.Children)
+                    result += ExploreBag(child) * count;
 
                 return result;
             }
         }
 
-        private static IReadOnlyDictionary<string, Node> NodesByColor(string input)
+        private static IReadOnlyDictionary<string, Node1> Part1Nodes(string input)
         {
-            var result = new Dictionary<string, Node>();
+            var result = new Dictionary<string, Node1>();
 
             foreach (var line in input.ToLines())
             {
                 var parser = new StringParser(line);
-                var parentColor = parser.ReadUntil(" bags contain ", skip:true);
-                var parent = result.Establish(parentColor, x => new Node { Color = x });
+                var parentColor = parser.ReadUntil(" bags contain ", skip: true);
+                var parent = result.Establish(parentColor, x => new Node1 { Color = x });
 
                 while (parser.HasMaterial)
                 {
@@ -90,23 +90,51 @@ namespace AdventOfCode2020.Challenges
                     var childColor = parser.ReadUntil(" bag", skip: true);
                     parser.SkipAny("s,. ");
 
-                    var child = result.Establish(childColor, x => new Node { Color = x });
-                    while (num --> 0)
-                        parent.Contains.Add(child);
-                    child.ContainedBy.Add(parent);
+                    var child = result.Establish(childColor, x => new Node1 { Color = x });
+                    child.Parents.Add(parent);
                 }
             }
 
             return result;
         }
 
-        class Node
+        private static IReadOnlyDictionary<string, Node2> Part2Nodes(string input)
+        {
+            var result = new Dictionary<string, Node2>();
+
+            foreach (var line in input.ToLines())
+            {
+                var parser = new StringParser(line);
+                var parentColor = parser.ReadUntil(" bags contain ", skip: true);
+                var parent = result.Establish(parentColor, x => new Node2 { Color = x });
+
+                while (parser.HasMaterial)
+                {
+                    if (!parser.TryReadInt(out var num))
+                        break;
+
+                    parser.Skip(1);
+                    var childColor = parser.ReadUntil(" bag", skip: true);
+                    parser.SkipAny("s,. ");
+
+                    var child = result.Establish(childColor, x => new Node2 { Color = x });
+                    parent.Children[child] = num;
+                }
+            }
+
+            return result;
+        }
+
+        class Node1
         {
             public string Color { get; set; }
-            public List<Node> ContainedBy { get; } = new List<Node>();
-            public List<Node> Contains { get; } = new List<Node>();
+            public List<Node1> Parents { get; } = new List<Node1>();
+        }
 
-            public override string ToString() => $"{Color}{(ContainedBy.Any() ? "" : "@")}";
+        class Node2
+        {
+            public string Color { get; set; }
+            public Dictionary<Node2, int> Children { get; } = new Dictionary<Node2, int>();
         }
 
         private const string part1Test = @"
