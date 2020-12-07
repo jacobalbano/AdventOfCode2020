@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace AdventOfCode2020.Util
 {
     public class StringParser
     {
+        public bool HasMaterial => cursor < str.Length;
+
         public StringParser(string input)
         {
             str = input;
@@ -13,17 +16,39 @@ namespace AdventOfCode2020.Util
 
         public int ReadInt()
         {
+            if (!TryReadInt(out var result))
+                throw new Exception("Failed to find integer in material");
+
+            return result;
+        }
+
+        public string ReadUntil(string term, bool skip)
+        {
+            int start = cursor,
+                index = str.IndexOf(term, cursor);
+            if (index < 0)
+                throw new Exception("Failed to find search term in material");
+
+            if (skip)
+                cursor = index + term.Length;
+            else
+                cursor = index;
+
+            return str[start..index];
+        }
+
+        public bool TryReadInt(out int result)
+        {
             int start = cursor;
             while (cursor < str.Length)
             {
-                var c = str[cursor];
                 if (!char.IsNumber(str[cursor]))
                     break;
 
                 cursor++;
             }
 
-            return int.Parse(str.AsSpan(start, cursor - start));
+            return int.TryParse(str.AsSpan(start, cursor - start), out result);
         }
 
         public void Skip(int length)
@@ -44,6 +69,17 @@ namespace AdventOfCode2020.Util
 
             if (j < skip.Length - 1)
                 throw new Exception("SkipExact expended available material before completing pattern");
+        }
+
+        internal void SkipAny(string chars)
+        {
+            while (cursor < str.Length)
+            {
+                if (!chars.Any(x => x == str[cursor]))
+                    break;
+                
+                cursor++;
+            }
         }
 
         public char ReadChar()

@@ -6,21 +6,19 @@ public static class EnumerableExtensions
 {
     public static IEnumerable<IEnumerable<T>> PartitionBy<T>(this IEnumerable<T> self, Func<T, bool> delimit)
     {
-        using (var e = self.GetEnumerator())
+        using var e = self.GetEnumerator();
+        while (e.MoveNext())
+            yield return Inner();
+
+        IEnumerable<T> Inner()
         {
-            while (e.MoveNext())
-                yield return Inner();
-
-            IEnumerable<T> Inner()
+            do
             {
-                do
-                {
-                    if (delimit(e.Current))
-                        yield break;
+                if (delimit(e.Current))
+                    yield break;
 
-                    yield return e.Current;
-                } while (e.MoveNext());
-            }
-        }    
+                yield return e.Current;
+            } while (e.MoveNext());
+        }
     }
 }
