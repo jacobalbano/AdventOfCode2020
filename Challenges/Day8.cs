@@ -12,29 +12,71 @@ namespace AdventOfCode2020.Challenges
     {
         public override void Part1Test()
         {
-            Assert.AreEqual(5, RunOnce(testInput));
+            Assert.AreEqual(5, RunOnce(testInput.ToLines()
+                .Select(Instruction.Parse)
+                .ToArray()).Accumulator);
         }
 
         public override object Part1(string input)
         {
-            return RunOnce(input);
+            return RunOnce(input.ToLines()
+                .Select(Instruction.Parse)
+                .ToArray()).Accumulator;
         }
 
-        private static int RunOnce(string input)
+        public override void Part2Test()
         {
-            var bytecode = input
-                .ToLines()
-                .Select(line => new Instruction(line[..3],int.Parse(line[3..])))
-                .ToArray();
+            Assert.AreEqual(8, RunUntilHalt(testInput.ToLines()
+                .Select(Instruction.Parse)
+                .ToArray()).Accumulator);
+        }
 
+        public override object Part2(string input)
+        {
+            return RunUntilHalt(input.ToLines()
+                .Select(Instruction.Parse)
+                .ToArray()).Accumulator;
+        }
+
+        private static VmState RunOnce(Instruction[] bytecode, VmState initialState = default)
+        {
             var visited = new HashSet<int>();
-            foreach (var state in Run(bytecode))
+            return Run(bytecode, initialState)
+                .TakeWhile(x => visited.Add(x.InstrPointer))
+                .Last();
+        }
+
+        private static VmState RunUntilHalt(Instruction[] bytecode)
+        {
+            var step = Run(bytecode).GetEnumerator();
+            while (step.MoveNext())
             {
-                if (!visited.Add(state.InstrPointer))
-                    return state.Accumulator;
+                var state = step.Current;
+                var inst = bytecode[state.InstrPointer];
+                switch (inst.Op[0])
+                {
+                    case 'n':
+                        state = RunInner(state, state.InstrPointer, new Instruction("jmp", inst.Value));
+                        break;
+                    case 'j':
+                        state = RunInner(state, state.InstrPointer, new Instruction("nop", inst.Value));
+                        break;
+                }
+
+                if (state.IsHalted)
+                    return state;
             }
 
             throw new UnreachableCodeException();
+
+            VmState RunInner(VmState initialState, int patchAt, Instruction patch)
+            {
+                var old = bytecode[patchAt];
+                bytecode[patchAt] = patch;
+                var result = RunOnce(bytecode, initialState);
+                bytecode[patchAt] = old;
+                return result;
+            }
         }
 
         private static IEnumerable<VmState> Run(Instruction[] instructions, VmState initialState = default)
@@ -66,6 +108,8 @@ namespace AdventOfCode2020.Challenges
 
             public string Op { get; }
             public int Value { get; }
+
+            public static Instruction Parse(string line) => new Instruction(line[..3], int.Parse(line[3..]));
         }
 
         private struct VmState
