@@ -58,7 +58,7 @@ namespace AdventOfCode2020.Util
 
         public void SkipExact(string skip)
         {
-            int start = cursor, j = 0;
+            int j = 0;
             while (cursor < str.Length && j < skip.Length)
             {
                 if (str[cursor] != skip[j++])
@@ -95,12 +95,12 @@ namespace AdventOfCode2020.Util
 
         public string ReadRemainder()
         {
-            var result = str.Substring(cursor);
+            var result = str[cursor..];
             cursor = str.Length;
             return result;
         }
 
-        private string str;
+        private readonly string str;
         private int cursor = 0;
     }
 }

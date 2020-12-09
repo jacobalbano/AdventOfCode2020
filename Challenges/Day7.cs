@@ -132,17 +132,15 @@ namespace AdventOfCode2020.Challenges
 
         class Node1
         {
-            public string Color { get; set; }
+            public string Color { get; init; }
             public List<Node1> Parents { get; } = new List<Node1>();
         }
 
         class Node2
         {
-            public string Color { get; set; }
+            public string Color { get; init; }
             public Dictionary<Node2, int> Children { get; } = new Dictionary<Node2, int>();
         }
-
-        private static IValidator<char> skipChars = new OptionValidator<char>(',', '.', ' ', 's');
 
         private const string part1Test = @"
 light red bags contain 1 bright white bag, 2 muted yellow bags.

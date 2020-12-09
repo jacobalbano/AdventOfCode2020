@@ -84,11 +84,11 @@ namespace AdventOfCode2020.Challenges
         public enum TokenKind { New, Key, Value }
         private struct Token
         {
-            public TokenKind Kind { get; set; }
-            public string Value { get; set; }
+            public TokenKind Kind { get; init; }
+            public string Value { get; init; }
         }
 
-        private IEnumerable<IReadOnlyDictionary<string, string>> ParsePassports(string input)
+        private static IEnumerable<IReadOnlyDictionary<string, string>> ParsePassports(string input)
         {
             var e = Tokenize(input).GetEnumerator();
             bool hasNext = e.MoveNext();
@@ -111,7 +111,7 @@ namespace AdventOfCode2020.Challenges
             }
         }
 
-        private IEnumerable<Token> Tokenize(string input)
+        private static IEnumerable<Token> Tokenize(string input)
         {
             foreach (var passport in input.ToLines().PartitionBy(string.IsNullOrWhiteSpace))
             {

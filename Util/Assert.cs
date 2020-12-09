@@ -5,7 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+#pragma warning disable CA1050 // Declare types in namespaces
 public static class Assert
+#pragma warning restore CA1050 // Declare types in namespaces
 {
     public static void ArraysMatch<T>(T[] expected, T[] actual)
     {

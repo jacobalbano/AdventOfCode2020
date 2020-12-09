@@ -53,13 +53,13 @@ namespace AdventOfCode2020.Challenges
             {
                 var state = step.Current;
                 var inst = bytecode[state.InstrPointer];
-                switch (inst.Op[0])
+                switch (inst.Op)
                 {
                     case 'n':
-                        state = RunInner(state, state.InstrPointer, new Instruction("jmp", inst.Value));
+                        state = RunInner(state, inst with { Op = 'j' });
                         break;
                     case 'j':
-                        state = RunInner(state, state.InstrPointer, new Instruction("nop", inst.Value));
+                        state = RunInner(state, inst with { Op = 'n' });
                         break;
                 }
 
@@ -69,25 +69,27 @@ namespace AdventOfCode2020.Challenges
 
             throw new UnreachableCodeException();
 
-            VmState RunInner(VmState initialState, int patchAt, Instruction patch)
+            VmState RunInner(VmState initialState, Instruction patch)
             {
-                var old = bytecode[patchAt];
-                bytecode[patchAt] = patch;
+                var old = bytecode[initialState.InstrPointer];
+                bytecode[initialState.InstrPointer] = patch;
                 var result = RunOnce(bytecode, initialState);
-                bytecode[patchAt] = old;
+                bytecode[initialState.InstrPointer] = old;
                 return result;
             }
         }
 
-        private static IEnumerable<VmState> Run(Instruction[] instructions, VmState initialState = default)
+        private static IEnumerable<VmState> Run(Instruction[] instructions, VmState initialState = default  )
         {
-            int i = initialState.InstrPointer, acc = initialState.Accumulator;
+            int i = initialState?.InstrPointer ?? 0,
+                acc = initialState?.Accumulator ?? 0;
+
             while (i < instructions.Length)
             {
                 var (op, val) = (instructions[i].Op, instructions[i].Value);
-                yield return new VmState(i, acc, false);
+                yield return new VmState { InstrPointer = i, Accumulator = acc, IsHalted = false };
 
-                switch (op[0])
+                switch (op)
                 {
                     case 'n': i++; break;
                     case 'j': i += val; break;
@@ -95,35 +97,22 @@ namespace AdventOfCode2020.Challenges
                 }
             }
 
-            yield return new VmState(i, acc, true);
+            yield return new VmState { InstrPointer = i, Accumulator = acc, IsHalted = true };
         }
 
-        private struct Instruction
+        private record Instruction
         {
-            public Instruction(string op, int val)
-            {
-                Op = op;
-                Value = val;
-            }
+            public char Op { get; init; }
+            public int Value { get; init; }
 
-            public string Op { get; }
-            public int Value { get; }
-
-            public static Instruction Parse(string line) => new Instruction(line[..3], int.Parse(line[3..]));
+            public static Instruction Parse(string line) => new Instruction { Op = line[0], Value = int.Parse(line[3..]) };
         }
 
-        private struct VmState
+        private record VmState
         {
-            public VmState(int instrPointer, int acc, bool isHalted)
-            {
-                InstrPointer = instrPointer;
-                Accumulator = acc;
-                IsHalted = isHalted;
-            }
-
-            public int InstrPointer { get; }
-            public int Accumulator { get; }
-            public bool IsHalted { get; }
+            public int InstrPointer { get; init; }
+            public int Accumulator { get; init; }
+            public bool IsHalted { get; init; }
         }
 
         private const string testInput = @"

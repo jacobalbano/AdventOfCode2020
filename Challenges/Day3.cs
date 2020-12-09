@@ -35,7 +35,7 @@ namespace AdventOfCode2020.Challenges
             return total;
         }
 
-        private int CountTreesForSlope(RepeatingGrid grid, int byX, int byY)
+        private static int CountTreesForSlope(RepeatingGrid grid, int byX, int byY)
         {
             int x = 0, y = 0, trees = 0;
             while (grid.IsValid(x += byX, y += byY))
@@ -75,7 +75,7 @@ namespace AdventOfCode2020.Challenges
                 }
             }
 
-            private bool[,] storage;
+            private readonly bool[,] storage;
         }
 
         private const string testInput = @"
