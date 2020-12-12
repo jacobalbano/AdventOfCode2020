@@ -7,7 +7,7 @@ using System.Text;
 namespace AdventOfCode2020.Challenges
 {
     [Challenge(1, "Report Repair")]
-    class Day1 : ChallengeBase
+    class Day01 : ChallengeBase
     {
         private const string testData = @"1721
 979

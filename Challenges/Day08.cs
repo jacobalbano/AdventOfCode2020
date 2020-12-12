@@ -8,7 +8,7 @@ using System.Text;
 namespace AdventOfCode2020.Challenges
 {
     [Challenge(8, "Handheld Halting")]
-    class Day8 : ChallengeBase
+    class Day08 : ChallengeBase
     {
         public override void Part1Test()
         {

@@ -10,7 +10,7 @@ using System.Text.RegularExpressions;
 namespace AdventOfCode2020.Challenges
 {
     [Challenge(7, "Handy Haversacks")]
-    class Day7 : ChallengeBase
+    class Day07 : ChallengeBase
     {
         public override void Part1Test()
         {

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace AdventOfCode2020.Challenges
 {
     [Challenge(9, "Encoding Error")]
-    class Day9 : ChallengeBase
+    class Day09 : ChallengeBase
     {
         public override void Part1Test()
         {

@@ -9,7 +9,7 @@ using System.Text.RegularExpressions;
 namespace AdventOfCode2020.Challenges
 {
     [Challenge(2, "Password Philosophy")]
-    class Day2 : ChallengeBase
+    class Day02 : ChallengeBase
     {
         public override void Part1Test()
         {

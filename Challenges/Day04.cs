@@ -11,7 +11,7 @@ using System.Text.RegularExpressions;
 namespace AdventOfCode2020.Challenges
 {
     [Challenge(4, "Passport Processing")]
-    class Day4 : ChallengeBase
+    class Day04 : ChallengeBase
     {
         public override void Part1Test()
         {

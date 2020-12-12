@@ -8,7 +8,7 @@ using System.Text;
 namespace AdventOfCode2020.Challenges
 {
     [Challenge(5, "Binary Boarding")]
-    class Day5: ChallengeBase
+    class Day05 : ChallengeBase
     {
         public override void Part1Test()
         {

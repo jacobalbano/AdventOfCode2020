@@ -7,7 +7,7 @@ using System.Text;
 namespace AdventOfCode2020.Challenges
 {
     [Challenge(3, "Toboggan Trajectory")]
-    class Day3 : ChallengeBase
+    class Day03 : ChallengeBase
     {
         public override void Part1Test()
         {

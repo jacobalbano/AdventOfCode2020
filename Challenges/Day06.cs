@@ -7,7 +7,7 @@ using System.Text;
 namespace AdventOfCode2020.Challenges
 {
     [Challenge(6, "Custom Customs")]
-    class Day6 : ChallengeBase
+    class Day06 : ChallengeBase
     {
         public override void Part1Test()
         {

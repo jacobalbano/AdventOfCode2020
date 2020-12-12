@@ -41,7 +41,7 @@ namespace AdventOfCode2020.Challenges
                 .Aggregate(1L, (x, y) => x * permutationsFor[y]);
         }
 
-        private IEnumerable<int> OneDiffSequences(string input)
+        private static IEnumerable<int> OneDiffSequences(string input)
         {
             int last = 0, group = 0;
             foreach (var i in FullRange(input))
