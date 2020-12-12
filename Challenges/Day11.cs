@@ -38,7 +38,7 @@ namespace AdventOfCode2020.Challenges
             return Run(input, Simulate2);
         }
 
-        private int Run(string input, Func<Grid<State>, Grid<State>> stepSimulation)
+        private static int Run(string input, Func<Grid<State>, Grid<State>> stepSimulation)
         {
             var grid = new Grid<State>(input, c => c switch
             {
