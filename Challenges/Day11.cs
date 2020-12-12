@@ -30,15 +30,15 @@ namespace AdventOfCode2020.Challenges
 
         public override object Part1(string input)
         {
-            return Run(input, Simulate1);
+            return Run(input, x => Simulate(x, x.GetSurroundingCount, 4));
         }
 
         public override object Part2(string input)
         {
-            return Run(input, Simulate2);
+            return Run(input, x => Simulate(x, x.GetLineOfSightCount, 5));
         }
 
-        private int Run(string input, Func<Grid<State>, Grid<State>> stepSimulation)
+        private static int Run(string input, Func<Grid<State>, Grid<State>> stepSimulation)
         {
             var grid = new Grid<State>(input, c => c switch
             {
@@ -55,15 +55,13 @@ namespace AdventOfCode2020.Challenges
                     break;
             }
 
-            int occupied = 0;
-            foreach (var (row, col) in grid.Cells())
-                if (grid[row, col] == State.Occupied)
-                    occupied++;
-
-            return occupied;
+            return grid.Cells()
+                .Select(x => grid[x.row, x.col])
+                .Where(x => x == State.Occupied)
+                .Count();
         }
 
-        private static Grid<State> Simulate1(Grid<State> original)
+        private static Grid<State> Simulate(Grid<State> original, Func<int, int, State, int> countSeats, int occupiedThreshold)
         {
             var clone = original.Clone();
             foreach (var (row, col) in original.Cells())
@@ -76,33 +74,7 @@ namespace AdventOfCode2020.Challenges
                         break;
 
                     case State.Occupied:
-                        if (original.GetSurroundingCount(row, col, State.Occupied) >= 4)
-                            clone[row, col] = State.Empty;
-                        break;
-                    case State.Floor:
-                        break;
-                    default:
-                        throw new UnreachableCodeException();
-                }
-            }
-
-            return clone;
-        }
-
-        private static Grid<State> Simulate2(Grid<State> original)
-        {
-            var clone = original.Clone();
-            foreach (var (row, col) in original.Cells())
-            {
-                switch (original[row, col])
-                {
-                    case State.Empty:
-                        if (original.GetLineOfSightCount(row, col, State.Occupied) == 0)
-                            clone[row, col] = State.Occupied;
-                        break;
-
-                    case State.Occupied:
-                        if (original.GetLineOfSightCount(row, col, State.Occupied) >= 5)
+                        if (original.GetSurroundingCount(row, col, State.Occupied) >= occupiedThreshold)
                             clone[row, col] = State.Empty;
                         break;
                     case State.Floor:
