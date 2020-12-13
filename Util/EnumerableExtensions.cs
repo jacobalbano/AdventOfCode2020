@@ -30,4 +30,15 @@ public static class EnumerableExtensions
         foreach (var x in untyped)
             yield return (T)x;
     }
+
+    public delegate (bool, TOut) SelectWhereSelector<TIn, TOut>(TIn input);
+
+    public static IEnumerable<TOut> SelectWhere<TIn, TOut>(this IEnumerable<TIn> self, SelectWhereSelector<TIn, TOut> selector)
+    {
+        foreach (var x in self)
+        {
+            var (success, result) = selector(x);
+            if (success) yield return result;
+        }
+    }
 }
