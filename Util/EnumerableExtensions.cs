@@ -25,6 +25,22 @@ public static class EnumerableExtensions
         }
     }
 
+    public static IEnumerable<IEnumerable<T>> ChunkBy<T>(this IEnumerable<T> self, int chunkSize)
+    {
+        using var e = self.GetEnumerator();
+        while (e.MoveNext())
+            yield return Inner();
+
+        IEnumerable<T> Inner()
+        {
+            for (int i = 0; i < chunkSize; i++)
+            {
+                yield return e.Current;
+                e.MoveNext();
+            }
+        }
+    }
+
     public static IEnumerable<T> As<T>(this IEnumerable untyped)
     {
         foreach (var x in untyped)
