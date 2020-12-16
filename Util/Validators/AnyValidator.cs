@@ -12,6 +12,11 @@ namespace AdventOfCode2020.Util.Validators
             this.validators = validators;
         }
 
+        public AnyValidator(IEnumerable<IValidator<T>> validators)
+        {
+            this.validators = validators.ToArray();
+        }
+
         public bool Validate(T input)
         {
             return validators.Any(x => x.Validate(input));

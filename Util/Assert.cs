@@ -38,7 +38,7 @@ public static class Assert
     public static void AreEqual<T>(T expected, T actual)
     {
         if (!Equals(expected, actual))
-            throw new AssertionFailure($"Values do not match - expected: {expected}, actual: {actual}");
+            throw new AssertionFailure($"Expected: {expected}, actual: {actual}");
     }
 
     public static void Unreachable()
