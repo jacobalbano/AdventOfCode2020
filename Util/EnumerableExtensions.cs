@@ -4,9 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-#pragma warning disable CA1050 // Declare types in namespaces
 public static class EnumerableExtensions
-#pragma warning restore CA1050 // Declare types in namespaces
 {
     public static IEnumerable<IEnumerable<T>> PartitionBy<T>(this IEnumerable<T> self, Func<T, bool> delimit)
     {

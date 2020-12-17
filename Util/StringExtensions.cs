@@ -5,9 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-#pragma warning disable CA1050 // Declare types in namespaces
 public static class StringExtensions
-#pragma warning restore CA1050 // Declare types in namespaces
 {
     public static IEnumerable<string> ToLines(this string input)
     {
