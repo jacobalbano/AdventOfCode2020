@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 #pragma warning disable CA1050 // Declare types in namespaces
@@ -56,5 +57,19 @@ public static class EnumerableExtensions
             var (success, result) = selector(x);
             if (success) yield return result;
         }
+    }
+
+    public static IEnumerable<IEnumerable<T>> CartesianProduct<T>(this IEnumerable<IEnumerable<T>> sequences)
+    {
+        IEnumerable<IEnumerable<T>> result = new[] { Enumerable.Empty<T>() };
+        foreach (var sequence in sequences)
+        {
+            var localSequence = sequence;
+            result = result.SelectMany(
+              _ => localSequence,
+              (seq, item) => seq.Concat(new[] { item })
+            );
+        }
+        return result;
     }
 }

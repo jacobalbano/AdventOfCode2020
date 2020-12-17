@@ -33,10 +33,4 @@ public static class StringExtensions
             .Select(x => x.Trim())
             .ToArray();
     }
-
-    public static void Deconstruct(this string[] input, out string a, out string b)
-    {
-        a = input[0];
-        b = input[1];
-    }
 }

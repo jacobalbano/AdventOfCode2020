@@ -108,16 +108,19 @@ namespace AdventOfCode2020.Challenges
 
             public IEnumerable<Coord3> GetNeighbors()
             {
-                for (int a = -1; a < 2; a++)
-                    for (int b = -1; b < 2; b++)
-                        for (int c = -1; c < 2; c++)
-                            if (!(a == b && b == c && c == 0))
-                                yield return new Coord3 { X = X + a, Y = Y + b, Z = Z + c };
+                foreach (var (a, b, c) in offsets)
+                    yield return new Coord3 { X = X + a, Y = Y + b, Z = Z + c };
             }
 
             public override bool Equals(object obj) => obj is Coord3 coord && Equals(coord);
             public bool Equals(Coord3 other) => X == other.X && Y == other.Y && Z == other.Z;
             public override int GetHashCode() => HashCode.Combine(X, Y, Z);
+
+            private static readonly int[][] offsets = Enumerable.Repeat(new[] { -1, 0, 1 }, 3)
+                .CartesianProduct()
+                .Select(x => x.ToArray())
+                .Where(x => !x.All(y => y == 0))
+                .ToArray();
         }
 
         private struct Coord4 : Conway<Coord4>.ICoord, IEquatable<Coord4>
@@ -129,18 +132,19 @@ namespace AdventOfCode2020.Challenges
 
             public IEnumerable<Coord4> GetNeighbors()
             {
-                for (int a = -1; a < 2; a++)
-                    for (int b = -1; b < 2; b++)
-                        for (int c = -1; c < 2; c++)
-                            for (int d = -1; d < 2; d++)
-                                if (!(a == b && b == c && c == d && d == 0))
-                                    yield return new Coord4 { X = X + a, Y = Y + b, Z = Z + c, W = W + d };
+                foreach (var (a, b, c, d) in offsets)
+                    yield return new Coord4 { X = X + a, Y = Y + b, Z = Z + c, W = W + d };
             }
 
             public override bool Equals(object obj) => obj is Coord4 coord && Equals(coord);
             public bool Equals(Coord4 other) => X == other.X && Y == other.Y && Z == other.Z && W == other.W;
             public override int GetHashCode() => HashCode.Combine(X, Y, Z, W);
 
+            private static readonly int[][] offsets = Enumerable.Repeat(new[] { -1, 0, 1 }, 4)
+                .CartesianProduct()
+                .Select(x => x.ToArray())
+                .Where(x => !x.All(y => y == 0))
+                .ToArray();
         }
 
         private const string testData = @"
