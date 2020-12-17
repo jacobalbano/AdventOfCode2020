@@ -13,12 +13,12 @@ namespace AdventOfCode2020.Challenges
     {
         public override void Part1Test()
         {
-            Assert.AreEqual(165L, Part1(testData));
+            Assert.AreEqual(165L, Part1(testData1));
         }
 
         public override void Part2Test()
         {
-            Assert.AreEqual(208L, Part2(testData));
+            Assert.AreEqual(208L, Part2(testData2));
         }
 
         public override object Part1(string input)
@@ -35,26 +35,44 @@ namespace AdventOfCode2020.Challenges
                 .Sum();
         }
 
-        //public override object Part2(string input)
-        //{
-        //    var memory = new Dictionary<long, long>();
+        public override object Part2(string input)
+        {
+            var memory = new Dictionary<long, long>();
 
-        //    foreach (var (mask, instructions) in ReadProgram(input))
-        //    {
-        //        foreach (var (addr, value) in instructions)
-        //            foreach (var p in Permute(mask, addr))
-        //                memory[p] = value;
-        //    }
+            foreach (var (mask, instructions) in ReadProgram(input))
+            {
+                foreach (var (addr, value) in instructions)
+                    foreach (var p in Permute(mask, addr))
+                        memory[p] = value;
+            }
 
-        //    return memory.Values
-        //        .Sum();
+            return memory.Values
+                .Sum();
+        }
 
-        //    IEnumerable<int> Permute(string mask, long address)
-        //    {
+        static IReadOnlyList<long> Permute(string mask, long address)
+        {
+            var floatingBits = new Stack<int>();
+            for (int i = mask.Length, j = 0; i-- > 0; ++j)
+            {
+                switch (mask[i])
+                {
+                    case '0': break;
+                    case '1': address |= 1L << j; break;
+                    case 'X': address &= ~(1L << j); floatingBits.Push(j); break;
+                    default: throw new UnreachableCodeException();
+                }
+            }
 
-        //    }
-        //}
+            var possible = new List<long> { address };
+            while (floatingBits.TryPop(out var bit))
+            {
+                for (int i = possible.Count; i --> 0;)
+                    possible.Add(possible[i] | 1L << bit);
+            }
 
+            return possible;
+        }
 
         private static long ApplyMask(string mask, long input)
         {
@@ -63,9 +81,9 @@ namespace AdventOfCode2020.Challenges
                 var c = mask[i];
                 switch (c)
                 {
-                    case 'X': break;
-                    case '1': input |= 1L << j; break;
                     case '0': input &= ~(1L << j); break;
+                    case '1': input |= 1L << j; break;
+                    case 'X': break;
                     default:
                         throw new UnreachableCodeException();
                 }
@@ -99,10 +117,16 @@ namespace AdventOfCode2020.Challenges
             }
         }
 
-        private const string testData = @"
+        private const string testData1 = @"
 mask = XXXXXXXXXXXXXXXXXXXXXXXXXXXXX1XXXX0X
 mem[8] = 11
 mem[7] = 101
 mem[8] = 0";
+
+        private const string testData2 = @"
+mask = 000000000000000000000000000000X1001X
+mem[42] = 100
+mask = 00000000000000000000000000000000X0XX
+mem[26] = 1";
     }
 }
