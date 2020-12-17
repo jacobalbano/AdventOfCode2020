@@ -15,6 +15,14 @@ public static class DictionaryExtensions
         return value;
     }
 
+    public static Dictionary<TKey, TValue> Clone<TKey, TValue>(this Dictionary<TKey, TValue> self)
+    {
+        var result = new Dictionary<TKey, TValue>(self.Count);
+        foreach (var (key, val) in self)
+            result[key] = val;
+        return result;
+    }
+
     public static TValue Establish<TKey, TValue>(this Dictionary<TKey, TValue> self, TKey key)
         where TValue : new()
     {
@@ -26,8 +34,15 @@ public static class DictionaryExtensions
         public static readonly Func<T> Create = MakeFactory();
         private static Func<T> MakeFactory()
         {
+            Expression create = null;
+
             var ctor = typeof(T).GetConstructor(Type.EmptyTypes);
-            return Expression.Lambda<Func<T>>(Expression.New(ctor)).Compile();
+            if (ctor != null)
+                create = Expression.New(ctor);
+            else if (typeof(T).IsValueType)
+                create = Expression.Constant(default(T), typeof(T));
+                
+            return Expression.Lambda<Func<T>>(create).Compile();
         }
     }
 }
