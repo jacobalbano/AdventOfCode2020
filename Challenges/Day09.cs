@@ -1,4 +1,5 @@
-﻿using AdventOfCodeScaffolding;
+﻿using AdventOfCode2020.Common;
+using AdventOfCodeScaffolding;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -58,7 +59,8 @@ namespace AdventOfCode2020.Challenges
                     .OrderByDescending(x => x)
                     .ToArray();
 
-                if (!FindSum2(preamble, numbers[search.End], out _, out _))
+                var parts = new long[2];
+                if (!SumN.Find(preamble, numbers[search.End], ref parts))
                     return numbers[search.End];
 
                 search = (search.Start.Value + 1)..(search.End.Value + 1);
@@ -82,22 +84,6 @@ namespace AdventOfCode2020.Challenges
             }
 
             return FindEncryptionWeakness(numbers[1..], entryPoint, out min, out max);
-        }
-
-        private static bool FindSum2(Span<long> numbers, long target, out long a, out long b)
-        {
-            a = b = default;
-            if (numbers.IsEmpty)
-                return false;
-
-            a = numbers[0];
-            b = numbers[^1];
-            if (a + b > target)
-                return FindSum2(numbers[1..], target, out a, out b);
-            else if (a + b < target)
-                return FindSum2(numbers[..^1], target, out a, out b);
-
-            return true;
         }
 
         private const string testData = @"

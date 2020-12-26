@@ -1,4 +1,5 @@
-﻿using AdventOfCodeScaffolding;
+﻿using AdventOfCode2020.Common;
+using AdventOfCodeScaffolding;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,78 +20,39 @@ namespace AdventOfCode2020.Challenges
         public override object Part1(string input)
         {
             var numbers = input.ToLines()
-                .Select(int.Parse)
+                .Select(long.Parse)
                 .OrderByDescending(x => x)
                 .ToArray();
 
-            if (!FindSum2(numbers, 2020, out var a, out var b))
+            var parts = new long[2];
+            if (!SumN.Find(numbers, 2020, ref parts))
                 throw new Exception("Panic! Unable to solve");
 
-            return a * b;
+            return parts.Aggregate((x, y) => x * y);
         }
 
         public override void Part1Test()
         {
-            Assert.AreEqual(Part1(testData), 514579);
+            Assert.AreEqual(Part1(testData), 514579L);
         }
 
         public override object Part2(string input)
         {
             var numbers = input.ToLines()
-                .Select(int.Parse)
+                .Select(long.Parse)
                 .OrderByDescending(x => x)
                 .ToArray();
 
-            if (!FindSum3(numbers, 2020, out var a, out var b, out var c))
+            var parts = new long[3];
+            if (!SumN.Find(numbers, 2020, ref parts))
                 throw new Exception("Panic! Unable to solve");
 
-            return a * b * c;
+            return parts.Aggregate((x, y) => x * y);
         }
 
         public override void Part2Test()
         {
-            Assert.AreEqual(Part2(testData), 241861950);
-        }
-
-        /// <summary>
-        ///  assume input is sorted descending
-        ///  sum the two numbers at either end
-        ///  if sum is larger than target, slice off head and recurse
-        ///  if sum is smaller than target, slice off tail and recurse
-        /// </summary>
-        private bool FindSum2(Span<int> numbers, int target, out int a, out int b)
-        {
-            a = b = -1;
-            if (numbers.IsEmpty)
-                return false;
-
-            a = numbers[0];
-            b = numbers[^1];
-            if (a + b > target)
-                return FindSum2(numbers[1..], target, out a, out b);
-            else if (a + b < target)
-                return FindSum2(numbers[..^1], target, out a, out b);
-
-            return true;
-        }
-
-        /// <summary>
-        ///  assume input is sorted descending
-        ///  find difference between head and target
-        ///  solve for difference with FindSum2
-        ///  if no solution, slice off head and recurse
-        /// </summary>
-        private bool FindSum3(Span<int> numbers, int target, out int a, out int b, out int c)
-        {
-            a = b = c = -1;
-            if (numbers.IsEmpty)
-                return false;
-
-            c = numbers[0];
-            if (FindSum2(numbers[1..], target - c, out a, out b))
-                return true;
-            
-            return FindSum3(numbers[1..], target, out a, out b, out c);
+            Assert.AreEqual(Part2(testData), 241861950L);
         }
     }
 }

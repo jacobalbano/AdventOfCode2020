@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace AdventOfCode2020.Util.Validators
+namespace AdventOfCode2020.Common.Validators
 {
     class AnyValidator<T> : IValidator<T>
     {

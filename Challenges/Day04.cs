@@ -1,5 +1,5 @@
 ﻿using AdventOfCode2020.Util;
-using AdventOfCode2020.Util.Validators;
+using AdventOfCode2020.Common.Validators;
 using AdventOfCodeScaffolding;
 using System;
 using System.Collections;
@@ -45,29 +45,18 @@ namespace AdventOfCode2020.Challenges
 
         private bool PassportIsFullyValid(IReadOnlyDictionary<string, string> passport)
         {
-            if (!PassportHasAllFields(passport))
-                return false;
-
-            foreach (var (key, value) in passport)
+            return PassportHasAllFields(passport) && passport.All(x => x.Key switch
             {
-                var isValid = key switch
-                {
-                    "byr" => birthYear.Validate(value),
-                    "iyr" => issueYear.Validate(value),
-                    "eyr" => expireYear.Validate(value),
-                    "hgt" => height.Validate(value),
-                    "hcl" => hairColor.Validate(value),
-                    "ecl" => eyeColor.Validate(value),
-                    "pid" => passportId.Validate(value),
-                    "cid" => true,
-                    _ => throw new UnreachableCodeException()
-                };
-
-                if (!isValid)
-                    return false;
-            }
-
-            return true;
+                "byr" => birthYear.Validate(x.Value),
+                "iyr" => issueYear.Validate(x.Value),
+                "eyr" => expireYear.Validate(x.Value),
+                "hgt" => height.Validate(x.Value),
+                "hcl" => hairColor.Validate(x.Value),
+                "ecl" => eyeColor.Validate(x.Value),
+                "pid" => passportId.Validate(x.Value),
+                "cid" => true,
+                _ => throw new UnreachableCodeException()
+            });
         }
 
         private static readonly IValidator<string> birthYear = new PredicateValidator<string>(x => int.TryParse(x, out var byr) && byr.IsBetween(1920, 2002));

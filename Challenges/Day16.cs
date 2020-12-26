@@ -1,4 +1,4 @@
-﻿using AdventOfCode2020.Util.Validators;
+﻿using AdventOfCode2020.Common.Validators;
 using AdventOfCodeScaffolding;
 using System;
 using System.Collections.Generic;

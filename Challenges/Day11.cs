@@ -1,4 +1,5 @@
-﻿using AdventOfCode2020.Util;
+﻿using AdventOfCode2020.Common;
+using AdventOfCode2020.Util;
 using AdventOfCodeScaffolding;
 using System;
 using System.Collections.Generic;
