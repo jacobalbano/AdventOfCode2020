@@ -8,22 +8,31 @@ namespace AdventOfCode2020.Common.Validators
 {
     class TransformValidator<TIn, TOut> : IValidator<TIn>
     {
-        public TransformValidator(Func<TIn, (TOut, bool)> tryTransform, IValidator<TOut> continueWith)
+        public delegate (bool, TOut) TryTransformTuple(TIn input);
+        public delegate bool TryTransform(TIn input, out TOut output);
+
+        public TransformValidator(TryTransformTuple handler, IValidator<TOut> continueWith)
         {
-            TryTransform = tryTransform;
+            Handler = handler;
+            ContinueWith = continueWith;
+        }
+
+        public TransformValidator(TryTransform handler, IValidator<TOut> continueWith)
+        {
+            Handler = x => (handler(x, out var result), result);
             ContinueWith = continueWith;
         }
 
         public bool Validate(TIn input)
         {
-            var (result, success) = TryTransform(input);
+            var (success, result) = Handler(input);
             if (!success)
                 return false;
 
             return ContinueWith.Validate(result);
         }
 
-        private readonly Func<TIn, (TOut, bool)> TryTransform;
+        private readonly TryTransformTuple Handler;
         private readonly IValidator<TOut> ContinueWith;
     }
 }

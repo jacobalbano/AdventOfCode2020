@@ -59,15 +59,49 @@ namespace AdventOfCode2020.Challenges
             });
         }
 
-        private static readonly IValidator<string> birthYear = new PredicateValidator<string>(x => int.TryParse(x, out var byr) && byr.IsBetween(1920, 2002));
-        private static readonly IValidator<string> issueYear = new PredicateValidator<string>(x => int.TryParse(x, out var byr) && byr.IsBetween(2010, 2020));
-        private static readonly IValidator<string> expireYear = new PredicateValidator<string>(x => int.TryParse(x, out var byr) && byr.IsBetween(2020, 2030));
-        private static readonly IValidator<string> heightCm = new PredicateValidator<string>(x => x[^2..] == "cm" && int.Parse(x[..^2]).IsBetween(150, 193));
-        private static readonly IValidator<string> heightIn = new PredicateValidator<string>(x => x[^2..] == "in" && int.Parse(x[..^2]).IsBetween(59, 76));
-        private static readonly IValidator<string> height = new AnyValidator<string>(heightIn, heightCm);
+        private static readonly IValidator<string> birthYear = new TransformValidator<string, int>(
+            int.TryParse,
+            new RangeValidator<int>(1920, 2002) { UpperInclusive = true }
+        );
+
+        private static readonly IValidator<string> issueYear = new TransformValidator<string, int>(
+            int.TryParse,
+            new RangeValidator<int>(2010, 2020) { UpperInclusive = true }
+        );
+
+        private static readonly IValidator<string> expireYear = new TransformValidator<string, int>(
+            int.TryParse,
+            new RangeValidator<int>(2020, 2030) { UpperInclusive = true }
+        );
+
+        private static readonly IValidator<string> height = new AnyValidator<string>(
+            new AllValidator<string>(
+                new PredicateValidator<string>(x => x.EndsWith("cm")),
+                new TransformValidator<string, int>(
+                    x => (int.TryParse(x[..^2], out var result), result),
+                    new RangeValidator<int>(150, 193) { UpperInclusive = true }
+                )
+            ),
+            new AllValidator<string>(
+                new PredicateValidator<string>(x => x.EndsWith("in")),
+                new TransformValidator<string, int>(
+                    x => (int.TryParse(x[..^2], out var result), result),
+                    new RangeValidator<int>(59, 76) { UpperInclusive = true }
+                )
+            )
+        );
+
+        private static readonly IValidator<string> hairColor = new TransformValidator<string, IEnumerable<char>>(
+            x => (x[0] == '#', x[1..]),
+            new EachValidator<char>(new AnyValidator<char>(
+                new RangeValidator<char>('0', '9') { UpperInclusive = true },
+                new RangeValidator<char>('a', 'f') { UpperInclusive = true }
+            ))
+        );
+
         private static readonly IValidator<string> eyeColor = new OptionValidator<string>("amb", "blu", "brn", "gry", "grn", "hzl", "oth");
         private static readonly IValidator<string> passportId = new PredicateValidator<string>(x => x.Length == 9 && int.TryParse(x, out _));
-        private static readonly IValidator<string> hairColor = new PredicateValidator<string>(x => x[0] == '#' && x[1..].All(x => x.IsBetween('0', '9') || x.IsBetween('a', 'f')));
+
         private static readonly IReadOnlyList<string> requiredKeys = new[] { "byr", "iyr", "eyr", "hgt", "hcl", "ecl", "pid" };
 
         public enum TokenKind { New, Key, Value }
